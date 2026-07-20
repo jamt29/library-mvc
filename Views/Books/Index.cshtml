@@ -1,0 +1,67 @@
+@model IEnumerable<Biblioteca.Models.Book>
+@{
+    ViewData["Title"] = "Libros";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Listado de Libros</h1>
+    <a asp-action="Create" class="btn btn-primary disabled">
+        + Nuevo Libro
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Autor</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Disponibilidad</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.Name</td>
+                                <td>@item.Author</td>
+                                <td>@item.Category</td>
+                                <td>@item.Price.ToString("C")</td>
+                                <td>
+                                    @if (item.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Disponible</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">No disponible</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info text-white disabled">Ver</a>
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning disabled">Editar</a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger disabled">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0" role="alert">
+                No hay libros cargados todavía.
+            </div>
+        }
+    </div>
+</div>
