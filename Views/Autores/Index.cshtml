@@ -1,0 +1,67 @@
+@model IEnumerable<Biblioteca.Models.Author>
+@{
+    ViewData["Title"] = "Autores";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Listado de Autores</h1>
+    <a asp-action="Create" class="btn btn-primary disabled">
+        + Nuevo Autor
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Nacionalidad</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.Name</td>
+                                <td>@item.Surname</td>
+                                <td>@item.Nationality</td>
+                                <td>@item.BirthDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info text-white disabled">Ver</a>
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning disabled">Editar</a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger disabled">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0" role="alert">
+                No hay autores cargados todavía.
+            </div>
+        }
+    </div>
+</div>
