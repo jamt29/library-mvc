@@ -1,0 +1,65 @@
+@model Biblioteca.Models.Book
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">@Model.Name</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="@ImageUrl(Model.ImagePath)"
+                 alt="@Model.Name"
+                 class="img-fluid rounded-start w-100"
+                 style="height: 100%; min-height: 360px; object-fit: cover;" />
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <dl class="row mb-4">
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ID)</dt>
+                    <dd class="col-sm-9">@Model.ID</dd>
+
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
+
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Author)</dt>
+                    <dd class="col-sm-9">@Model.Author</dd>
+
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Category)</dt>
+                    <dd class="col-sm-9">@Model.Category</dd>
+
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Price)</dt>
+                    <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+
+                    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsAvailable)</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success">Disponible</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">No disponible</span>
+                        }
+                    </dd>
+                </dl>
+
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@Model.ID" class="btn btn-danger">Eliminar</a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string ImageUrl(string? path)
+        => string.IsNullOrEmpty(path)
+            ? Url.Content("~/images/no-image.svg")
+            : Url.Content("~/images/" + path);
+}

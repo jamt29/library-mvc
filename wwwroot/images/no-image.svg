@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="200" height="280">
+  <rect width="200" height="280" fill="#e9ecef"/>
+  <g transform="translate(100 110)" fill="#6c757d" font-family="sans-serif" text-anchor="middle">
+    <path d="M-30 -25 h60 v50 h-60 z" fill="none" stroke="#6c757d" stroke-width="2"/>
+    <text y="50" font-size="14">Sin imagen</text>
+  </g>
+</svg>

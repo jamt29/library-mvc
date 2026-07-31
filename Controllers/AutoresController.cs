@@ -19,4 +19,48 @@ public class AutoresController : Controller
     {
         return View(_authors);
     }
+
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var author = _authors.FirstOrDefault(a => a.ID == id);
+        if (author is null) return NotFound();
+        return View(author);
+    }
+
+    [HttpPost]
+    public IActionResult Edit(int id, Author author)
+    {
+        if (id != author.ID) return BadRequest();
+        if (!ModelState.IsValid) return View(author);
+
+        var existing = _authors.FirstOrDefault(a => a.ID == id);
+        if (existing is null) return NotFound();
+
+        existing.Name        = author.Name;
+        existing.Surname     = author.Surname;
+        existing.Nationality = author.Nationality;
+        existing.BirthDate   = author.BirthDate;
+        existing.IsActive    = author.IsActive;
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public IActionResult Delete(int id)
+    {
+        var author = _authors.FirstOrDefault(a => a.ID == id);
+        if (author is null) return NotFound();
+        return View(author);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        var author = _authors.FirstOrDefault(a => a.ID == id);
+        if (author is null) return NotFound();
+
+        _authors.Remove(author);
+        return RedirectToAction(nameof(Index));
+    }
 }
