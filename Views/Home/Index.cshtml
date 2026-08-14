@@ -1,8 +1,255 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Sistema de Gestión de Biblioteca</h1>
-    <p>Bienvenidos al sistema de gestion de bibliotecas desarrollados en ASP .Net Core MVC</p>
+<div class="biblio-home">
+    <div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner rounded-3 shadow">
+            <div class="carousel-item active">
+                <div class="hero-slide hero-slide-1 d-flex align-items-center justify-content-center text-center text-white">
+                    <div class="p-4">
+                        <h1 class="display-5 fw-bold">Bienvenido a la Biblioteca Virtual</h1>
+                        <p class="lead">Miles de libros, autores y categorías a un clic de distancia.</p>
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-light btn-lg mt-2">Explorar catálogo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide-2 d-flex align-items-center justify-content-center text-center text-white">
+                    <div class="p-4">
+                        <h2 class="display-6 fw-bold">Nuevos títulos cada semana</h2>
+                        <p class="lead">Mantenete al día con las últimas incorporaciones de nuestro catálogo.</p>
+                        <a asp-controller="Home" asp-action="Categories" class="btn btn-light btn-lg mt-2">Ver categorías</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide-3 d-flex align-items-center justify-content-center text-center text-white">
+                    <div class="p-4">
+                        <h2 class="display-6 fw-bold">Un club de lectura para cada gusto</h2>
+                        <p class="lead">Sumate a nuestras actividades y descubrí nuevos autores.</p>
+                        <a asp-controller="Home" asp-action="About" class="btn btn-light btn-lg mt-2">Conocer más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+    <div class="alert alert-biblio alert-dismissible fade show d-flex align-items-center" role="alert">
+        <span class="icon-inline me-2"><partial name="_Icon" model="@("book")" /></span>
+        <div>
+            <strong>¡Nueva colección disponible!</strong> Se incorporaron títulos de literatura latinoamericana y ciencia ficción.
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    <div class="row g-3 text-center mb-5">
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card--books h-100">
+                <div class="card-body">
+                    <div class="fs-2 fw-bold">1,240</div>
+                    <div>Libros</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card--authors h-100">
+                <div class="card-body">
+                    <div class="fs-2 fw-bold">310</div>
+                    <div>Autores</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card--categories h-100">
+                <div class="card-body">
+                    <div class="fs-2 fw-bold">18</div>
+                    <div>Categorías</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card--users h-100">
+                <div class="card-body">
+                    <div class="fs-2 fw-bold">2,050</div>
+                    <div>Usuarios activos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3 mb-0">Explorá por categorías</h2>
+            <a asp-controller="Home" asp-action="Categories" class="btn btn-outline-accent btn-sm">Ver todas</a>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="icon-lg"><partial name="_Icon" model="@("open-book")" /></div>
+                        <h3 class="h6 mt-2">Ficción</h3>
+                        <span class="badge text-bg-secondary">320 libros</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="icon-lg"><partial name="_Icon" model="@("flask")" /></div>
+                        <h3 class="h6 mt-2">Ciencia y Tecnología</h3>
+                        <span class="badge text-bg-secondary">180 libros</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="icon-lg"><partial name="_Icon" model="@("landmark")" /></div>
+                        <h3 class="h6 mt-2">Historia</h3>
+                        <span class="badge text-bg-secondary">210 libros</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="icon-lg"><partial name="_Icon" model="@("star")" /></div>
+                        <h3 class="h6 mt-2">Infantil</h3>
+                        <span class="badge text-bg-secondary">150 libros</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3 mb-0">Libros destacados</h2>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-outline-accent btn-sm">Ver catálogo</a>
+        </div>
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/no-image.svg" class="card-img-top book-cover" alt="Portada de Cien Años de Soledad">
+                    <div class="card-body">
+                        <span class="badge book-badge book-badge--popular mb-2">Popular</span>
+                        <h3 class="h6 card-title">Cien Años de Soledad</h3>
+                        <p class="card-text text-muted small">Gabriel García Márquez</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-accent w-100">Ver más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/no-image.svg" class="card-img-top book-cover" alt="Portada de Don Quijote de la Mancha">
+                    <div class="card-body">
+                        <span class="badge book-badge book-badge--classic mb-2">Clásico</span>
+                        <h3 class="h6 card-title">Don Quijote de la Mancha</h3>
+                        <p class="card-text text-muted small">Miguel de Cervantes</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-accent w-100">Ver más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/no-image.svg" class="card-img-top book-cover" alt="Portada de 1984">
+                    <div class="card-body">
+                        <span class="badge book-badge book-badge--new mb-2">Nuevo</span>
+                        <h3 class="h6 card-title">1984</h3>
+                        <p class="card-text text-muted small">George Orwell</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-accent w-100">Ver más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/no-image.svg" class="card-img-top book-cover" alt="Portada de El Principito">
+                    <div class="card-body">
+                        <span class="badge book-badge book-badge--new mb-2">Nuevo</span>
+                        <h3 class="h6 card-title">El Principito</h3>
+                        <p class="card-text text-muted small">Antoine de Saint-Exupéry</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-accent w-100">Ver más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="mb-5">
+        <h2 class="h3 mb-3">Servicios de la biblioteca</h2>
+        <div class="accordion services-accordion" id="serviciosAccordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#servicio1" aria-expanded="true" aria-controls="servicio1">
+                        <span class="icon-inline me-2"><partial name="_Icon" model="@("box")" /></span> Préstamo de libros
+                    </button>
+                </h3>
+                <div id="servicio1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
+                    <div class="accordion-body">
+                        Retirá hasta 3 libros por 15 días, con opción a renovación si nadie más lo solicitó.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#servicio2" aria-expanded="false" aria-controls="servicio2">
+                        <span class="icon-inline me-2"><partial name="_Icon" model="@("door")" /></span> Sala de lectura y estudio
+                    </button>
+                </h3>
+                <div id="servicio2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                    <div class="accordion-body">
+                        Espacios individuales y grupales disponibles de lunes a sábado, con reserva previa.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#servicio3" aria-expanded="false" aria-controls="servicio3">
+                        <span class="icon-inline me-2"><partial name="_Icon" model="@("laptop")" /></span> Recursos digitales
+                    </button>
+                </h3>
+                <div id="servicio3" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                    <div class="accordion-body">
+                        Acceso a e-books, bases de datos académicas y revistas científicas desde cualquier dispositivo.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#servicio4" aria-expanded="false" aria-controls="servicio4">
+                        <span class="icon-inline me-2"><partial name="_Icon" model="@("person")" /></span> Asesoría bibliográfica
+                    </button>
+                </h3>
+                <div id="servicio4" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                    <div class="accordion-body">
+                        Nuestro equipo de bibliotecarios te ayuda a encontrar fuentes confiables para tus investigaciones.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="cta-section text-center p-5 mb-4">
+        <h2 class="h3 mb-3">¿Listo para tu próxima lectura?</h2>
+        <p class="mb-4">Sumate a la comunidad de la Biblioteca Virtual y descubrí tu próximo libro favorito.</p>
+        <a asp-controller="Books" asp-action="Index" class="btn btn-accent btn-lg me-2 mt-2">Ver catálogo de libros</a>
+        <a asp-controller="Home" asp-action="About" class="btn btn-outline-secondary btn-lg me-2 mt-2">Conocé más sobre nosotros</a>
+    </section>
+
 </div>

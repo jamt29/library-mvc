@@ -2,6 +2,83 @@
     ViewData["Title"] = "Acerca De";
 }
 
-<h1>@ViewData["Title"]</h1>
+<article class="about-page">
+    <header class="about-hero">
+        <h1>Biblioteca Virtual</h1>
+        <p class="about-tagline">Conectando personas, libros e ideas desde cualquier lugar.</p>
+    </header>
 
-<p>Obten informacion acerca de la libreria.</p>
+    <section class="about-intro" aria-labelledby="mision-titulo">
+        <div class="about-grid">
+            <article class="about-block">
+                <h2 id="mision-titulo">Nuestra Misión</h2>
+                <p>Facilitar el acceso libre y gratuito al conocimiento, ofreciendo un catálogo diverso de libros,
+                    autores y categorías para acompañar el aprendizaje y el disfrute de la lectura en toda la comunidad.</p>
+            </article>
+            <article class="about-block">
+                <h2>Nuestra Visión</h2>
+                <p>Ser la biblioteca virtual de referencia en la región, integrando tecnología y servicios
+                    bibliotecarios de calidad para acercar la lectura a cada rincón, sin importar la distancia.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="about-history" aria-labelledby="historia-titulo">
+        <h2 id="historia-titulo">Nuestra Historia</h2>
+        <p>La Biblioteca Virtual nació como un proyecto para digitalizar y centralizar el acceso a libros, autores
+            y categorías, permitiendo que estudiantes, docentes e investigadores encuentren en un solo lugar el
+            material que necesitan. Desde entonces, hemos ampliado nuestro catálogo y nuestros servicios para
+            acompañar a una comunidad de lectores cada vez más grande.</p>
+    </section>
+
+    <section class="about-services" aria-labelledby="servicios-titulo">
+        <h2 id="servicios-titulo">Servicios Bibliotecarios</h2>
+        <div class="services-grid">
+            <article class="service-card">
+                <span class="service-icon"><partial name="_Icon" model="@("book")" /></span>
+                <h3>Catálogo de libros</h3>
+                <p>Miles de títulos organizados por autor y categoría, disponibles para consulta y préstamo.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-icon"><partial name="_Icon" model="@("person")" /></span>
+                <h3>Autores destacados</h3>
+                <p>Perfiles de autores nacionales e internacionales con sus obras más relevantes.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-icon"><partial name="_Icon" model="@("folder")" /></span>
+                <h3>Categorías temáticas</h3>
+                <p>Explorá ficción, ciencia, historia, literatura infantil y mucho más, todo clasificado.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-icon"><partial name="_Icon" model="@("people")" /></span>
+                <h3>Atención personalizada</h3>
+                <p>Nuestro equipo de bibliotecarios te guía en la búsqueda del material que necesitás.</p>
+            </article>
+        </div>
+    </section>
+
+    <aside class="about-stats" aria-label="Estadísticas de la biblioteca">
+        <div class="stat-item">
+            <span class="stat-number">1,240</span>
+            <span class="stat-label">Libros</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">310</span>
+            <span class="stat-label">Autores</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">18</span>
+            <span class="stat-label">Categorías</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">2,050</span>
+            <span class="stat-label">Usuarios activos</span>
+        </div>
+    </aside>
+
+    <footer class="about-contact">
+        <h2>Horarios y Contacto</h2>
+        <p>Lunes a viernes de 8:00 a 20:00 &middot; Sábados de 9:00 a 13:00</p>
+        <p>¿Tenés dudas? Escribinos a <a href="mailto:contacto@bibliotecavirtual.edu">contacto@bibliotecavirtual.edu</a></p>
+    </footer>
+</article>
