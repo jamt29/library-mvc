@@ -32,27 +32,94 @@
     </section>
 
     <section class="about-services" aria-labelledby="servicios-titulo">
-        <h2 id="servicios-titulo">Servicios Bibliotecarios</h2>
+        <div class="section-header">
+            <h2 class="section-title" id="servicios-titulo">Servicios Bibliotecarios</h2>
+        </div>
         <div class="services-grid">
             <article class="service-card">
                 <span class="service-icon"><partial name="_Icon" model="@("book")" /></span>
-                <h3>Catálogo de libros</h3>
-                <p>Miles de títulos organizados por autor y categoría, disponibles para consulta y préstamo.</p>
+                <h3 class="service-card__title">Catálogo de libros</h3>
+                <p class="service-card__text">Miles de títulos organizados por autor y categoría, disponibles para consulta y préstamo.</p>
             </article>
             <article class="service-card">
                 <span class="service-icon"><partial name="_Icon" model="@("person")" /></span>
-                <h3>Autores destacados</h3>
-                <p>Perfiles de autores nacionales e internacionales con sus obras más relevantes.</p>
+                <h3 class="service-card__title">Autores destacados</h3>
+                <p class="service-card__text">Perfiles de autores nacionales e internacionales con sus obras más relevantes.</p>
             </article>
             <article class="service-card">
                 <span class="service-icon"><partial name="_Icon" model="@("folder")" /></span>
-                <h3>Categorías temáticas</h3>
-                <p>Explorá ficción, ciencia, historia, literatura infantil y mucho más, todo clasificado.</p>
+                <h3 class="service-card__title">Categorías temáticas</h3>
+                <p class="service-card__text">Explorá ficción, ciencia, historia, literatura infantil y mucho más, todo clasificado.</p>
             </article>
             <article class="service-card">
                 <span class="service-icon"><partial name="_Icon" model="@("people")" /></span>
-                <h3>Atención personalizada</h3>
-                <p>Nuestro equipo de bibliotecarios te guía en la búsqueda del material que necesitás.</p>
+                <h3 class="service-card__title">Atención personalizada</h3>
+                <p class="service-card__text">Nuestro equipo de bibliotecarios te guía en la búsqueda del material que necesitás.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="about-features" aria-labelledby="features-titulo">
+        <div class="section-header">
+            <h2 class="section-title" id="features-titulo">Características del sistema</h2>
+        </div>
+        <div class="features-grid">
+            <article class="feature-card">
+                <div class="feature-card__icon"><partial name="_Icon" model="@("laptop")" /></div>
+                <h3 class="feature-card__title">Acceso multiplataforma</h3>
+                <p class="feature-card__text">Consultá el catálogo desde tu computadora, tablet o teléfono sin perder funcionalidades.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-card__icon"><partial name="_Icon" model="@("star")" /></div>
+                <h3 class="feature-card__title">Recomendaciones</h3>
+                <p class="feature-card__text">Sugerencias personalizadas según tus préstamos anteriores y categorías favoritas.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-card__icon"><partial name="_Icon" model="@("folder")" /></div>
+                <h3 class="feature-card__title">Listas y favoritos</h3>
+                <p class="feature-card__text">Guardá libros en tu lista de deseos y organizá tu propia colección de lectura.</p>
+            </article>
+            <article class="feature-card">
+                <div class="feature-card__icon"><partial name="_Icon" model="@("box")" /></div>
+                <h3 class="feature-card__title">Renovación online</h3>
+                <p class="feature-card__text">Renová tus préstamos sin moverte de casa y recibí recordatorios antes del vencimiento.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="about-authors" aria-labelledby="autores-titulo">
+        <div class="section-header">
+            <h2 class="section-title" id="autores-titulo">Autores destacados</h2>
+            <a asp-controller="Autores" asp-action="Index" class="btn btn-outline-accent btn-sm">Ver todos</a>
+        </div>
+        <div class="authors-grid">
+            <article class="author-card">
+                <div class="author-card__avatar" aria-hidden="true">GG</div>
+                <h3 class="author-card__name">Gabriel García Márquez</h3>
+                <p class="author-card__role">Literatura latinoamericana</p>
+                <p class="author-card__bio">Premio Nobel 1982. Maestro del realismo mágico con obras como <em>Cien años de soledad</em> y <em>El amor en los tiempos del cólera</em>.</p>
+                <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-outline-accent">Ver libros</a>
+            </article>
+            <article class="author-card">
+                <div class="author-card__avatar" aria-hidden="true">MC</div>
+                <h3 class="author-card__name">Miguel de Cervantes</h3>
+                <p class="author-card__role">Clásico universal</p>
+                <p class="author-card__bio">Padre de la novela moderna. Su obra cumbre, <em>Don Quijote de la Mancha</em>, es un pilar de la literatura mundial.</p>
+                <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-outline-accent">Ver libros</a>
+            </article>
+            <article class="author-card">
+                <div class="author-card__avatar" aria-hidden="true">GO</div>
+                <h3 class="author-card__name">George Orwell</h3>
+                <p class="author-card__role">Ensayo y ficción política</p>
+                <p class="author-card__bio">Voz indispensable del siglo XX. Autor de <em>1984</em> y <em>Rebelión en la granja</em>, lecturas obligadas de nuestra biblioteca.</p>
+                <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-outline-accent">Ver libros</a>
+            </article>
+            <article class="author-card">
+                <div class="author-card__avatar" aria-hidden="true">AS</div>
+                <h3 class="author-card__name">Antoine de Saint-Exupéry</h3>
+                <p class="author-card__role">Literatura infantil y ensayo</p>
+                <p class="author-card__bio">Aviador y escritor francés. Su <em>El Principito</em> es uno de los libros más traducidos de la historia.</p>
+                <a asp-controller="Books" asp-action="Index" class="btn btn-sm btn-outline-accent">Ver libros</a>
             </article>
         </div>
     </section>
