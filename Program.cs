@@ -1,7 +1,15 @@
+using Biblioteca.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Registro de dependencia IAutorService con su implementación AutorService en ciclo de vida Scoped.
+builder.Services.AddScoped<IAutorService, AutorService>();
+
+// Para intercambiar la implementación sin tocar AutoresController, simplemente se cambia el registro a:
+// builder.Services.AddScoped<IAutorService, AlternativeAutorService>();
 
 var app = builder.Build();
 

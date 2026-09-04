@@ -1,29 +1,27 @@
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Controllers;
 
 public class AutoresController : Controller
 {
-    private static List<Author> _authors = new()
+    private readonly IAutorService _autorService;
+
+    public AutoresController(IAutorService autorService)
     {
-        new Author { ID = 1, Name = "Gabriel",    Surname = "García Márquez", Nationality = "Colombiana",     BirthDate = new DateOnly(1927, 3, 6),  IsActive = false },
-        new Author { ID = 2, Name = "Isabel",     Surname = "Allende",        Nationality = "Chilena",        BirthDate = new DateOnly(1942, 8, 2),  IsActive = true  },
-        new Author { ID = 3, Name = "Jorge Luis", Surname = "Borges",         Nationality = "Argentina",      BirthDate = new DateOnly(1899, 8, 24), IsActive = false },
-        new Author { ID = 4, Name = "Julio",      Surname = "Cortázar",       Nationality = "Belga-Argentino",BirthDate = new DateOnly(1914, 8, 26), IsActive = false },
-        new Author { ID = 5, Name = "Mario",      Surname = "Vargas Llosa",   Nationality = "Peruana",        BirthDate = new DateOnly(1936, 3, 28), IsActive = true  },
-        new Author { ID = 6, Name = "Eduardo",    Surname = "Galeano",        Nationality = "Uruguaya",       BirthDate = new DateOnly(1940, 9, 3),  IsActive = false },
-    };
+        _autorService = autorService;
+    }
 
     public IActionResult Index()
     {
-        return View(_authors);
+        return View(_autorService.GetAll());
     }
 
     [HttpGet]
     public IActionResult Edit(int id)
     {
-        var author = _authors.FirstOrDefault(a => a.ID == id);
+        var author = _autorService.GetById(id);
         if (author is null) return NotFound();
         return View(author);
     }
@@ -34,14 +32,8 @@ public class AutoresController : Controller
         if (id != author.ID) return BadRequest();
         if (!ModelState.IsValid) return View(author);
 
-        var existing = _authors.FirstOrDefault(a => a.ID == id);
-        if (existing is null) return NotFound();
-
-        existing.Name        = author.Name;
-        existing.Surname     = author.Surname;
-        existing.Nationality = author.Nationality;
-        existing.BirthDate   = author.BirthDate;
-        existing.IsActive    = author.IsActive;
+        var updated = _autorService.Update(id, author);
+        if (!updated) return NotFound();
 
         return RedirectToAction(nameof(Index));
     }
@@ -49,7 +41,7 @@ public class AutoresController : Controller
     [HttpGet]
     public IActionResult Delete(int id)
     {
-        var author = _authors.FirstOrDefault(a => a.ID == id);
+        var author = _autorService.GetById(id);
         if (author is null) return NotFound();
         return View(author);
     }
@@ -57,10 +49,9 @@ public class AutoresController : Controller
     [HttpPost, ActionName("Delete")]
     public IActionResult DeleteConfirmed(int id)
     {
-        var author = _authors.FirstOrDefault(a => a.ID == id);
-        if (author is null) return NotFound();
+        var deleted = _autorService.Delete(id);
+        if (!deleted) return NotFound();
 
-        _authors.Remove(author);
         return RedirectToAction(nameof(Index));
     }
 }
