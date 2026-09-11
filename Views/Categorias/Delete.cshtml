@@ -1,0 +1,58 @@
+@model Biblioteca.Models.Categoria
+@{
+    ViewData["Title"] = "Eliminar Categoría";
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h1 class="section-title mb-0 text-danger">Eliminar Categoría</h1>
+                    <span class="badge category-badge-id px-2 py-1">ID #@Model.Id</span>
+                </div>
+                <p class="text-muted mb-0">Confirmación previa para eliminar la categoría de la base de datos</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-accent">
+                &larr; Volver al listado
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card biblio-card biblio-card--danger p-4">
+                    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+                        <span class="icon-inline"><partial name="_Icon" model="@("box")" /></span>
+                        <div>
+                            <strong>¿Estás seguro de que deseás eliminar esta categoría?</strong>
+                            <div class="small">Esta acción no se puede deshacer y el registro se eliminará permanentemente de PostgreSQL.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded mb-4 border" style="background-color: var(--biblio-paper) !important; border-color: var(--biblio-paper-dark) !important;">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-3" style="font-family: Georgia, serif; color: var(--biblio-leather);">ID:</dt>
+                            <dd class="col-sm-9 mb-2"><span class="badge category-badge-id">#@Model.Id</span></dd>
+
+                            <dt class="col-sm-3" style="font-family: Georgia, serif; color: var(--biblio-leather);">Nombre:</dt>
+                            <dd class="col-sm-9 mb-2"><strong style="color: var(--biblio-ink);">@Model.Nombre</strong></dd>
+
+                            <dt class="col-sm-3" style="font-family: Georgia, serif; color: var(--biblio-leather);">Descripción:</dt>
+                            <dd class="col-sm-9 mb-0 text-muted">@(string.IsNullOrWhiteSpace(Model.Descripcion) ? "Sin descripción" : Model.Descripcion)</dd>
+                        </dl>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                Sí, eliminar definitivamente
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-accent">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

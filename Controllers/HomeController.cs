@@ -23,7 +23,7 @@ public class HomeController : Controller
 
     public IActionResult Categories()
     {
-        return View();
+        return RedirectToAction("Index", "Categorias");
     }
 
     public IActionResult Users()

@@ -863,3 +863,68 @@ body {
     padding-top: 1rem;
   }
 }
+
+/* ==========================================================================
+   Módulo de Categorías & CRUD - Piel Clásica
+   ========================================================================== */
+.biblio-card {
+  background-color: #fff;
+  border: 1px solid var(--biblio-paper-dark);
+  border-radius: var(--biblio-radius);
+  box-shadow: var(--biblio-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.biblio-card--gold {
+  border-top: 4px solid var(--biblio-gold);
+}
+
+.biblio-card--danger {
+  border-top: 4px solid #b02a37;
+}
+
+.biblio-form-card {
+  background-color: var(--biblio-paper);
+  border: 1px solid var(--biblio-paper-dark);
+  border-top: 4px solid var(--biblio-gold);
+  border-radius: var(--biblio-radius);
+  box-shadow: var(--biblio-shadow-sm);
+  padding: 1.75rem;
+}
+
+.biblio-table {
+  border-color: var(--biblio-paper-dark);
+}
+
+.biblio-table thead tr {
+  background-color: var(--biblio-ink) !important;
+  color: var(--biblio-paper) !important;
+}
+
+.biblio-table thead th {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid var(--biblio-gold) !important;
+  background-color: var(--biblio-ink) !important;
+  color: var(--biblio-paper) !important;
+  padding: 0.85rem 1rem;
+}
+
+.biblio-table tbody td {
+  padding: 0.85rem 1rem;
+}
+
+.category-card__desc {
+  color: #5c524c;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.category-badge-id {
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+  border: 1px solid var(--biblio-paper-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+}

@@ -1,0 +1,115 @@
+@model IEnumerable<Biblioteca.Models.Categoria>
+@{
+    ViewData["Title"] = "Categorías";
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">Categorías Temáticas</h1>
+                <p class="text-muted mb-0">Explorá y gestioná las temáticas del catálogo de la biblioteca</p>
+            </div>
+            <a asp-action="Create" class="btn btn-accent">
+                <span class="icon-inline me-1"><partial name="_Icon" model="@("folder")" /></span> + Nueva Categoría
+            </a>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="alert alert-biblio mb-4">
+                <div class="alert-biblio__inner">
+                    <div class="alert-biblio__icon">
+                        <partial name="_Icon" model="@("open-book")" />
+                    </div>
+                    <div class="alert-biblio__text">
+                        Actualmente hay <strong>@Model.Count()</strong> categorías temáticas registradas en la base de datos.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista de Tarjetas (estilo Home/Index) -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <article class="card category-card h-100 p-3 d-flex flex-column text-center">
+                            <div class="card-body d-flex flex-column align-items-center">
+                                <div class="icon-lg mb-2">
+                                    <partial name="_Icon" model="@("open-book")" />
+                                </div>
+                                <span class="badge category-badge-id px-2 py-1 mb-2">ID #@item.Id</span>
+                                <h3 class="h5 mb-2" style="font-family: Georgia, serif; color: var(--biblio-ink);">
+                                    @item.Nombre
+                                </h3>
+                                <p class="category-card__desc mb-3 flex-grow-1">
+                                    @(string.IsNullOrWhiteSpace(item.Descripcion) ? "Sin descripción detallada" : item.Descripcion)
+                                </p>
+                                <div class="d-flex gap-2 w-100 justify-content-center mt-auto pt-2 border-top" style="border-color: var(--biblio-paper-dark) !important;">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-accent flex-fill">
+                                        Editar
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger flex-fill">
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+
+            <!-- Vista de Tabla Formal -->
+            <div class="card biblio-card biblio-card--gold">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h2 class="h6 mb-0 fw-bold" style="font-family: Georgia, serif; color: var(--biblio-leather);">
+                        Detalle en tabla
+                    </h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 biblio-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th class="text-center" style="width: 200px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><span class="badge category-badge-id">#@item.Id</span></td>
+                                    <td><strong style="color: var(--biblio-ink);">@item.Nombre</strong></td>
+                                    <td class="text-muted">@(string.IsNullOrWhiteSpace(item.Descripcion) ? "—" : item.Descripcion)</td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-accent">
+                                                Editar
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                                Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-biblio text-center p-4">
+                <div class="mb-2">
+                    <partial name="_Icon" model="@("folder")" />
+                </div>
+                <h4 style="font-family: Georgia, serif;">No hay categorías registradas</h4>
+                <p class="mb-3 text-muted">Comenzá agregando una nueva temática para tus libros.</p>
+                <a asp-action="Create" class="btn btn-accent">Crear la primera categoría</a>
+            </div>
+        }
+    </section>
+</div>

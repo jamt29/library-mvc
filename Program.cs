@@ -8,6 +8,9 @@ builder.Services.AddControllersWithViews();
 //Registro de dependencia IAutorService con su implementación AutorService en ciclo de vida Scoped.
 builder.Services.AddScoped<IAutorService, AutorService>();
 
+// Registro de ICategoriaService con CategoriaService (ADO.NET con PostgreSQL)
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+
 // Para intercambiar la implementación sin tocar AutoresController, simplemente se cambia el registro a:
 // builder.Services.AddScoped<IAutorService, AlternativeAutorService>();
 
