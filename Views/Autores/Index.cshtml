@@ -3,65 +3,94 @@
     ViewData["Title"] = "Autores";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="mb-0">Listado de Autores</h1>
-    <a asp-action="Create" class="btn btn-primary disabled">
-        + Nuevo Autor
-    </a>
-</div>
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">Autores</h1>
+                <p class="text-muted mb-0">Explorá los autores registrados en el catálogo de la biblioteca</p>
+            </div>
+            <a asp-action="Create" class="btn btn-accent">
+                <span class="icon-inline me-1"><partial name="_Icon" model="@("person")" /></span> + Nuevo Autor
+            </a>
+        </div>
 
-<div class="card shadow-sm">
-    <div class="card-body">
+        @if (TempData["Success"] is string successMessage)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span class="icon-inline me-1"><partial name="_Icon" model="@("people")" /></span>
+                @successMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+
         @if (Model.Any())
         {
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered align-middle mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Nacionalidad</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Estado</th>
-                            <th class="text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+            <div class="alert alert-biblio mb-4">
+                <div class="alert-biblio__inner">
+                    <div class="alert-biblio__icon">
+                        <partial name="_Icon" model="@("people")" />
+                    </div>
+                    <div class="alert-biblio__text">
+                        Actualmente hay <strong>@Model.Count()</strong> autores registrados en el catálogo.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card biblio-card biblio-card--gold">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h2 class="h6 mb-0 fw-bold" style="font-family: Georgia, serif; color: var(--biblio-leather);">
+                        Listado de autores
+                    </h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 biblio-table">
+                        <thead>
                             <tr>
-                                <td>@item.ID</td>
-                                <td>@item.Name</td>
-                                <td>@item.Surname</td>
-                                <td>@item.Nationality</td>
-                                <td>@item.BirthDate.ToString("dd/MM/yyyy")</td>
-                                <td>
-                                    @if (item.IsActive)
-                                    {
-                                        <span class="badge bg-success">Activo</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Inactivo</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info text-white disabled">Ver</a>
-                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">Editar</a>
-                                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Eliminar</a>
-                                </td>
+                                <th style="width: 80px;">ID</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Nacionalidad</th>
+                                <th>Fecha de Nacimiento</th>
+                                <th class="text-center" style="width: 140px;">Estado</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><span class="badge category-badge-id">#@item.ID</span></td>
+                                    <td><strong style="color: var(--biblio-ink);">@item.Name</strong></td>
+                                    <td><strong style="color: var(--biblio-ink);">@item.Surname</strong></td>
+                                    <td class="text-muted">@item.Nationality</td>
+                                    <td>@item.BirthDate.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-center">
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge text-bg-success">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-secondary">Inactivo</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         }
         else
         {
-            <div class="alert alert-info mb-0" role="alert">
-                No hay autores cargados todavía.
+            <div class="alert alert-biblio text-center p-4">
+                <div class="mb-2">
+                    <partial name="_Icon" model="@("people")" />
+                </div>
+                <h4 style="font-family: Georgia, serif;">No hay autores registrados</h4>
+                <p class="mb-3 text-muted">Todavía no hay autores cargados en el catálogo.</p>
+                <a asp-action="Create" class="btn btn-accent">Crear el primer autor</a>
             </div>
         }
-    </div>
+    </section>
 </div>

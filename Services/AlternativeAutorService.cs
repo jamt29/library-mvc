@@ -16,30 +16,9 @@ public class AlternativeAutorService : IAutorService
         return _authors;
     }
 
-    public Author? GetById(int id)
+    public void Add(Author author)
     {
-        return _authors.FirstOrDefault(a => a.ID == id);
-    }
-
-    public bool Update(int id, Author author)
-    {
-        var existing = GetById(id);
-        if (existing is null) return false;
-
-        existing.Name        = author.Name;
-        existing.Surname     = author.Surname;
-        existing.Nationality = author.Nationality;
-        existing.BirthDate   = author.BirthDate;
-        existing.IsActive    = author.IsActive;
-
-        return true;
-    }
-
-    public bool Delete(int id)
-    {
-        var author = GetById(id);
-        if (author is null) return false;
-
-        return _authors.Remove(author);
+        author.ID = _authors.Count == 0 ? 1 : _authors.Max(a => a.ID) + 1;
+        _authors.Add(author);
     }
 }

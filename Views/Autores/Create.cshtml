@@ -1,0 +1,66 @@
+@model Biblioteca.Models.Author
+@{
+    ViewData["Title"] = "Nuevo Autor";
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">Nuevo Autor</h1>
+                <p class="text-muted mb-0">Registrá un nuevo autor en el catálogo de la biblioteca</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-accent">&larr; Volver al listado</a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="biblio-form-card">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold" style="color: var(--biblio-ink);"></label><span class="text-danger ms-1">*</span>
+                            <input asp-for="Name" class="form-control" placeholder="Ej. Gabriel" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Surname" class="form-label fw-bold" style="color: var(--biblio-ink);"></label><span class="text-danger ms-1">*</span>
+                            <input asp-for="Surname" class="form-control" placeholder="Ej. García Márquez" />
+                            <span asp-validation-for="Surname" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nationality" class="form-label fw-bold" style="color: var(--biblio-ink);"></label><span class="text-danger ms-1">*</span>
+                            <input asp-for="Nationality" class="form-control" placeholder="Ej. Colombiana" />
+                            <span asp-validation-for="Nationality" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BirthDate" class="form-label fw-bold" style="color: var(--biblio-ink);"></label><span class="text-danger ms-1">*</span>
+                            <input asp-for="BirthDate" class="form-control" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsActive" class="form-check-input" role="switch" />
+                            <label asp-for="IsActive" class="form-check-label"></label>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2 border-top" style="border-color: var(--biblio-paper-dark) !important;">
+                            <button type="submit" class="btn btn-accent">
+                                <span class="icon-inline me-1"><partial name="_Icon" model="@("person")" /></span> Guardar autor
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-accent">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
