@@ -1,0 +1,73 @@
+@model Biblioteca.Models.Libro
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">@Model.Titulo</h1>
+                <p class="text-muted mb-0">Detalle del libro</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-accent">&larr; Volver al listado</a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card biblio-card biblio-card--gold">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="book-card__media h-100">
+                                <img src="@ImageUrl(Model.ImagenPath)" alt="Portada de @Model.Titulo" />
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <dl class="row mb-4">
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Id)</dt>
+                                    <dd class="col-sm-8"><span class="badge category-badge-id">#@Model.Id</span></dd>
+
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Titulo)</dt>
+                                    <dd class="col-sm-8">@Model.Titulo</dd>
+
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Autor)</dt>
+                                    <dd class="col-sm-8">@Model.Autor</dd>
+
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Categoria)</dt>
+                                    <dd class="col-sm-8">@Model.Categoria</dd>
+
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Precio)</dt>
+                                    <dd class="col-sm-8">@Model.Precio.ToString("C")</dd>
+
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Disponible)</dt>
+                                    <dd class="col-sm-8">
+                                        @if (Model.Disponible)
+                                        {
+                                            <span class="badge text-bg-success">Disponible</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-secondary">No disponible</span>
+                                        }
+                                    </dd>
+                                </dl>
+
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a asp-action="Index" class="btn btn-outline-accent">Volver al listado</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@functions {
+    string ImageUrl(string? path)
+        => string.IsNullOrEmpty(path)
+            ? Url.Content("~/images/no-image.svg")
+            : Url.Content("~/images/" + path);
+}

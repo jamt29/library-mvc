@@ -1,0 +1,144 @@
+@model IEnumerable<Biblioteca.Models.Libro>
+@{
+    ViewData["Title"] = "Catálogo de Libros";
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">Catálogo de Libros</h1>
+                <p class="text-muted mb-0">Explorá y gestioná los libros registrados en la biblioteca</p>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="badge category-badge-id px-3 py-2">@Model.Count() libros</span>
+                @if (Model.Any())
+                {
+                    <div style="min-width: 240px;">
+                        <label for="bookSearch" class="visually-hidden">Buscar por título o autor</label>
+                        <input type="search" id="bookSearch" class="form-control" placeholder="Buscar por título o autor..." autocomplete="off" />
+                    </div>
+                }
+                <a asp-action="Create" class="btn btn-accent">
+                    <span class="icon-inline me-1"><partial name="_Icon" model="@("book")" /></span> + Nuevo Libro
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["Success"] is string successMessage)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span class="icon-inline me-1"><partial name="_Icon" model="@("open-book")" /></span>
+                @successMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] is string errorMessage)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @errorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+
+        @if (Model.Any())
+        {
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col" data-book-card data-search-text="@item.Titulo @item.Autor">
+                        <article class="card book-card h-100">
+                            <div class="book-card__media">
+                                <img src="@ImageUrl(item.ImagenPath)" alt="Portada de @item.Titulo" />
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <span class="badge category-badge-id">@item.Categoria</span>
+                                    @if (item.Disponible)
+                                    {
+                                        <span class="badge text-bg-success">Disponible</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-secondary">No disponible</span>
+                                    }
+                                </div>
+                                <h2 class="h6 card-title mb-1" style="font-family: Georgia, serif; color: var(--biblio-ink);">@item.Titulo</h2>
+                                <p class="card-text text-muted small mb-2">@item.Autor</p>
+                                <div class="mt-auto">
+                                    <p class="h5 mb-3" style="color: var(--biblio-leather);">@item.Precio.ToString("C")</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-accent w-100">Ver detalle</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+
+            <div id="searchEmptyMessage" class="alert alert-biblio text-center p-4 d-none" role="status">
+                <div class="mb-2"><partial name="_Icon" model="@("open-book")" /></div>
+                <h4 style="font-family: Georgia, serif;">Sin resultados</h4>
+                <p class="mb-0 text-muted">No se encontraron libros que coincidan con tu búsqueda. Probá con otro título o autor.</p>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-biblio text-center p-4">
+                <div class="mb-2"><partial name="_Icon" model="@("open-book")" /></div>
+                <h4 style="font-family: Georgia, serif;">No hay libros registrados</h4>
+                <p class="mb-3 text-muted">Comenzá agregando el primer libro al catálogo de la biblioteca.</p>
+                <a asp-action="Create" class="btn btn-accent">Crear el primer libro</a>
+            </div>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const searchInput = document.getElementById('bookSearch');
+            const cards = Array.from(document.querySelectorAll('[data-book-card]'));
+            const emptyMessage = document.getElementById('searchEmptyMessage');
+
+            if (!searchInput || cards.length === 0) {
+                return;
+            }
+
+            const normalize = function (value) {
+                return (value || '')
+                    .toString()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .trim();
+            };
+
+            searchInput.addEventListener('input', function () {
+                const term = normalize(searchInput.value);
+                let visibleCount = 0;
+
+                cards.forEach(function (card) {
+                    const matches = term === '' || normalize(card.dataset.searchText).includes(term);
+                    card.classList.toggle('d-none', !matches);
+                    if (matches) {
+                        visibleCount++;
+                    }
+                });
+
+                if (emptyMessage) {
+                    emptyMessage.classList.toggle('d-none', visibleCount > 0);
+                }
+            });
+        })();
+    </script>
+}
+
+@functions {
+    string ImageUrl(string? path)
+        => string.IsNullOrEmpty(path)
+            ? Url.Content("~/images/no-image.svg")
+            : Url.Content("~/images/" + path);
+}
