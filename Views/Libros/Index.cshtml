@@ -68,8 +68,10 @@
                                 <p class="card-text text-muted small mb-2">@item.Autor</p>
                                 <div class="mt-auto">
                                     <p class="h5 mb-3" style="color: var(--biblio-leather);">@item.Precio.ToString("C")</p>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-accent w-100">Ver detalle</a>
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-accent flex-fill">Ver</a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-accent flex-fill">Editar</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger flex-fill">Eliminar</a>
                                     </div>
                                 </div>
                             </div>

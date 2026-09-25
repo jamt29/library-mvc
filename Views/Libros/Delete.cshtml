@@ -1,0 +1,89 @@
+@model Biblioteca.Models.Libro
+@{
+    ViewData["Title"] = "Eliminar Libro";
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="section-header">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h1 class="section-title mb-0 text-danger">Eliminar Libro</h1>
+                    <span class="badge category-badge-id px-2 py-1">ID #@Model.Id</span>
+                </div>
+                <p class="text-muted mb-0">Confirmación previa para eliminar el libro de la base de datos</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-accent">
+                &larr; Volver al listado
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card biblio-card biblio-card--danger p-4">
+                    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+                        <span class="icon-inline"><partial name="_Icon" model="@("box")" /></span>
+                        <div>
+                            <strong>¿Está seguro?</strong>
+                            <div class="small">Esta acción no se puede deshacer. El libro y su imagen se eliminarán permanentemente.</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-start mb-4">
+                        <div class="col-md-4">
+                            <div class="book-card__media rounded">
+                                <img src="@ImageUrl(Model.ImagenPath)" alt="Portada de @Model.Titulo" />
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="bg-light p-3 rounded border" style="background-color: var(--biblio-paper) !important; border-color: var(--biblio-paper-dark) !important;">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4" style="font-family: Georgia, serif; color: var(--biblio-leather);">Título:</dt>
+                                    <dd class="col-sm-8 mb-2"><strong style="color: var(--biblio-ink);">@Model.Titulo</strong></dd>
+
+                                    <dt class="col-sm-4" style="font-family: Georgia, serif; color: var(--biblio-leather);">Autor:</dt>
+                                    <dd class="col-sm-8 mb-2">@Model.Autor</dd>
+
+                                    <dt class="col-sm-4" style="font-family: Georgia, serif; color: var(--biblio-leather);">Categoría:</dt>
+                                    <dd class="col-sm-8 mb-2"><span class="badge category-badge-id">@Model.Categoria</span></dd>
+
+                                    <dt class="col-sm-4" style="font-family: Georgia, serif; color: var(--biblio-leather);">Precio:</dt>
+                                    <dd class="col-sm-8 mb-2">@Model.Precio.ToString("C")</dd>
+
+                                    <dt class="col-sm-4" style="font-family: Georgia, serif; color: var(--biblio-leather);">Disponible:</dt>
+                                    <dd class="col-sm-8 mb-0">
+                                        @if (Model.Disponible)
+                                        {
+                                            <span class="badge text-bg-success">Disponible</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-secondary">No disponible</span>
+                                        }
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                Eliminar
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-accent">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@functions {
+    string ImageUrl(string? path)
+        => string.IsNullOrEmpty(path)
+            ? Url.Content("~/images/no-image.svg")
+            : Url.Content("~/images/" + path);
+}

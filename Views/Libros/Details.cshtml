@@ -54,6 +54,8 @@
                                 </dl>
 
                                 <div class="d-flex flex-wrap gap-2">
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-accent">Editar</a>
+                                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Eliminar</a>
                                     <a asp-action="Index" class="btn btn-outline-accent">Volver al listado</a>
                                 </div>
                             </div>

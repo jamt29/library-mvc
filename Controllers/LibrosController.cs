@@ -19,21 +19,21 @@ public class LibrosController : Controller
         _env = env;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var libros = await _context.Libros
+        var libros = _context.Libros
             .AsNoTracking()
             .OrderBy(l => l.Titulo)
-            .ToListAsync();
+            .ToList();
 
         return View(libros);
     }
 
-    public async Task<IActionResult> Details(int id)
+    public IActionResult Details(int id)
     {
-        var libro = await _context.Libros
+        var libro = _context.Libros
             .AsNoTracking()
-            .FirstOrDefaultAsync(l => l.Id == id);
+            .FirstOrDefault(l => l.Id == id);
 
         if (libro is null) return NotFound();
         return View(libro);
@@ -47,30 +47,103 @@ public class LibrosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Libro libro, IFormFile? image)
+    public IActionResult Create(Libro libro, IFormFile? image)
     {
         if (!ModelState.IsValid) return View(libro);
 
-        var savedFile = await TrySaveImageAsync(image);
+        var savedFile = TrySaveImage(image);
         if (savedFile is ImageSaveResult.Failure failure)
         {
             ModelState.AddModelError(nameof(Libro.ImagenPath), failure.Message);
             return View(libro);
         }
 
-        // Store null instead of an empty string when no image was uploaded.
         libro.ImagenPath = savedFile is ImageSaveResult.Success success && !string.IsNullOrEmpty(success.FileName)
             ? success.FileName
             : null;
 
         _context.Libros.Add(libro);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
 
         TempData["Success"] = $"El libro \"{libro.Titulo}\" se registró correctamente.";
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<ImageSaveResult> TrySaveImageAsync(IFormFile? image)
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var libro = _context.Libros.Find(id);
+
+        if (libro is null) return NotFound();
+        return View(libro);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, Libro libro, IFormFile? image)
+    {
+        if (id != libro.Id) return BadRequest();
+        if (!ModelState.IsValid) return View(libro);
+
+        var current = _context.Libros.Find(id);
+        if (current is null) return NotFound();
+
+        var previousImage = current.ImagenPath;
+
+        _context.Entry(current).State = EntityState.Detached;
+
+        var savedFile = TrySaveImage(image);
+        if (savedFile is ImageSaveResult.Failure failure)
+        {
+            ModelState.AddModelError(nameof(Libro.ImagenPath), failure.Message);
+            return View(libro);
+        }
+
+        var newImageFileName = (savedFile as ImageSaveResult.Success)?.FileName;
+        var hasNewImage = !string.IsNullOrEmpty(newImageFileName);
+
+        libro.ImagenPath = hasNewImage ? newImageFileName : previousImage;
+
+        _context.Libros.Update(libro);
+        _context.SaveChanges();
+
+        if (hasNewImage)
+        {
+            DeleteImageFile(previousImage);
+        }
+
+        TempData["Success"] = $"El libro \"{libro.Titulo}\" se actualizó correctamente.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public IActionResult Delete(int id)
+    {
+        var libro = _context.Libros
+            .AsNoTracking()
+            .FirstOrDefault(l => l.Id == id);
+
+        if (libro is null) return NotFound();
+        return View(libro);
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        var libro = _context.Libros.Find(id);
+        if (libro is null) return NotFound();
+
+        DeleteImageFile(libro.ImagenPath);
+        _context.Libros.Remove(libro);
+        _context.SaveChanges();
+
+        TempData["Success"] = $"El libro \"{libro.Titulo}\" se eliminó correctamente.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    private ImageSaveResult TrySaveImage(IFormFile? image)
     {
         if (image is null || image.Length == 0) return new ImageSaveResult.Success(string.Empty);
 
@@ -84,12 +157,25 @@ public class LibrosController : Controller
         var fileName = $"{Guid.NewGuid()}{ext}";
         var path = Path.Combine(_env.WebRootPath, "images", fileName);
 
-        await using (var stream = new FileStream(path, FileMode.Create))
+        using (var stream = new FileStream(path, FileMode.Create))
         {
-            await image.CopyToAsync(stream);
+            image.CopyTo(stream);
         }
 
         return new ImageSaveResult.Success(fileName);
+    }
+
+    private void DeleteImageFile(string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName)) return;
+
+        fileName = Path.GetFileName(fileName);
+
+        var path = Path.Combine(_env.WebRootPath, "images", fileName);
+        if (System.IO.File.Exists(path))
+        {
+            System.IO.File.Delete(path);
+        }
     }
 
     private abstract record ImageSaveResult
