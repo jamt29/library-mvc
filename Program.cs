@@ -1,5 +1,6 @@
 using Biblioteca.Data;
 using Biblioteca.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,23 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<BibliotecaDbContext>(options => options.UseNpgsql(connectionString));
 
+// ASP.NET Core Identity: usuarios e inicio/cierre de sesión sobre EF Core.
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+
+        options.User.RequireUniqueEmail = true;
+
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddEntityFrameworkStores<BibliotecaDbContext>()
+    .AddDefaultTokenProviders();
+
 //Registro de dependencia IAutorService con su implementación AutorService en ciclo de vida Scoped.
 builder.Services.AddScoped<IAutorService, AutorService>();
 
@@ -24,11 +42,15 @@ builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
 var app = builder.Build();
 
-// Aplica las migraciones pendientes y siembra los datos iniciales de libros.
+// Aplica las migraciones pendientes y siembra los datos iniciales.
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BibliotecaDbContext>();
     DbInitializer.Initialize(context);
+
+    // Usuario de pruebas idempotente para poder iniciar sesión sin registrarse.
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    await DbInitializer.SeedAdminUserAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.
@@ -42,6 +64,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

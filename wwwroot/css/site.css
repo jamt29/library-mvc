@@ -928,3 +928,138 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
 }
+
+/* ===== Autenticación - Inicio de sesión y registro ===== */
+.auth-card {
+  background-color: #fff;
+  border: 1px solid var(--biblio-paper-dark);
+  border-top: 4px solid var(--biblio-gold);
+  border-radius: var(--biblio-radius);
+  box-shadow: var(--biblio-shadow-md);
+  padding: 2rem 1.75rem;
+}
+
+.auth-card__header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+}
+
+.auth-card__icon .icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.auth-card__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--biblio-ink);
+  margin: 0 0 0.25rem;
+}
+
+.auth-card__subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.auth-label {
+  color: var(--biblio-ink);
+  font-weight: 600;
+}
+
+/* Anillo de foco dorado dentro de la tarjeta; reemplaza el azul global. */
+.auth-card .form-control:focus {
+  border-color: var(--biblio-gold);
+  box-shadow: 0 0 0 0.2rem rgba(169, 120, 47, 0.25);
+}
+
+.auth-validation-summary.validation-summary-errors {
+  background-color: rgba(176, 42, 55, 0.08);
+  border-left: 4px solid #b02a37;
+  border-radius: var(--biblio-radius);
+  color: #b02a37;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+}
+
+.auth-validation-summary.validation-summary-errors ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.auth-validation-summary.validation-summary-errors li + li {
+  margin-top: 0.25rem;
+}
+
+.auth-field-error {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.auth-card .input-validation-error {
+  border-color: #b02a37;
+}
+
+.auth-card .input-validation-error:focus {
+  border-color: #b02a37;
+  box-shadow: 0 0 0 0.2rem rgba(176, 42, 55, 0.25);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+}
+
+.auth-links {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.auth-links a {
+  color: var(--biblio-leather);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-links a:hover,
+.auth-links a:focus {
+  text-decoration: underline;
+}
+
+.auth-hint {
+  background-color: var(--biblio-paper);
+  border: 1px solid var(--biblio-paper-dark);
+  border-radius: var(--biblio-radius);
+  color: #6c757d;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.auth-hint ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+@media (max-width: 575.98px) {
+  .auth-card {
+    padding: 1.5rem 1.1rem;
+  }
+}

@@ -1,9 +1,12 @@
 using Biblioteca.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Data;
 
-public class BibliotecaDbContext : DbContext
+// El contexto hereda de IdentityDbContext para incluir las tablas de usuarios y roles de Identity.
+public class BibliotecaDbContext : IdentityDbContext<IdentityUser>
 {
     public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options) : base(options) { }
 
@@ -12,6 +15,9 @@ public class BibliotecaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Primero se configura el modelo de Identity; si no se llama a base, sus tablas no se crean.
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Libro>(entity =>
         {
             entity.ToTable("libros");

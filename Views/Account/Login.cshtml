@@ -1,0 +1,61 @@
+@model Biblioteca.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="biblio-home">
+    <section class="biblio-section mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="auth-card">
+                    <div class="auth-card__header">
+                        <span class="auth-card__icon"><partial name="_Icon" model="@("person")" /></span>
+                        <h1 class="auth-card__title">Iniciar sesión</h1>
+                        <p class="auth-card__subtitle">Accedé al catálogo con tu cuenta de la biblioteca.</p>
+                    </div>
+
+                    @if (TempData["Success"] is string successMessage)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span class="icon-inline me-1"><partial name="_Icon" model="@("open-book")" /></span>
+                            @successMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Login" asp-route-returnUrl="@returnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="auth-validation-summary"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioOCorreo" class="form-label auth-label"></label>
+                            <input asp-for="UsuarioOCorreo" class="form-control" placeholder="Ej. estudiante o estudiante@uees.edu.ec" autocomplete="username" />
+                            <span asp-validation-for="UsuarioOCorreo" class="text-danger auth-field-error"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Contrasena" class="form-label auth-label"></label>
+                            <input asp-for="Contrasena" class="form-control" autocomplete="current-password" />
+                            <span asp-validation-for="Contrasena" class="text-danger auth-field-error"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="Recordarme" class="form-check-input" />
+                            <label asp-for="Recordarme" class="form-check-label"></label>
+                        </div>
+
+                        <button type="submit" class="btn btn-accent auth-submit">Iniciar sesión</button>
+                    </form>
+
+                    <p class="auth-links mb-0">
+                        ¿No tenés cuenta? <a asp-action="Register">Registrate</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

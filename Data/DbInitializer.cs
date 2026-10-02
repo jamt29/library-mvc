@@ -1,15 +1,51 @@
 using Biblioteca.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Data;
 
 public static class DbInitializer
 {
+    public const string AdminUserName = "admin";
+    public const string AdminEmail = "admin@biblioteca.local";
+    public const string AdminPassword = "Admin2026";
+
     public static void Initialize(BibliotecaDbContext context)
     {
         context.Database.Migrate();
         SeedLibros(context);
         SeedAutores(context);
+    }
+
+    // Crea el usuario de pruebas de forma idempotente: si ya existe, no hace nada.
+    public static async Task SeedAdminUserAsync(UserManager<IdentityUser> userManager)
+    {
+        if (await userManager.FindByNameAsync(AdminUserName) is not null)
+        {
+            return;
+        }
+
+        // Si el correo ya pertenece a otra cuenta se omite, para no romper el arranque.
+        if (await userManager.FindByEmailAsync(AdminEmail) is not null)
+        {
+            return;
+        }
+
+        var admin = new IdentityUser
+        {
+            UserName = AdminUserName,
+            Email = AdminEmail,
+            // No se implementa confirmación por correo electrónico.
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(admin, AdminPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo crear el usuario de pruebas '{AdminUserName}': {errors}");
+        }
     }
 
     private static void SeedLibros(BibliotecaDbContext context)
