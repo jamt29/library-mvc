@@ -103,6 +103,9 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            // Todo usuario nuevo recibe el rol básico: puede consultar el catálogo, no gestionarlo.
+            await _userManager.AddToRoleAsync(user, Roles.Usuario);
+
             // No se inicia sesión automáticamente: el usuario debe autenticarse.
             TempData["Success"] = "Tu cuenta se creó correctamente. Ya podés iniciar sesión.";
             return RedirectToAction(nameof(Login));
@@ -124,6 +127,13 @@ public class AccountController : Controller
         await _signInManager.SignOutAsync();
         TempData["Success"] = "Cerraste sesión correctamente.";
         return RedirectToAction("Index", "Home");
+    }
+
+    // Página que se muestra cuando un usuario autenticado no tiene el rol requerido.
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 
     // Traduce los códigos de error de Identity a mensajes en español.

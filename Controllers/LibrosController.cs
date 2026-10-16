@@ -1,10 +1,13 @@
 using Biblioteca.Data;
 using Biblioteca.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Controllers;
 
+// El módulo completo requiere una sesión activa; la gestión fina se restringe por rol en cada acción.
+[Authorize]
 public class LibrosController : Controller
 {
     private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
@@ -19,6 +22,7 @@ public class LibrosController : Controller
         _env = env;
     }
 
+    // Consulta: cualquier usuario autenticado (en cualquier rol) puede ver el catálogo.
     public IActionResult Index()
     {
         var libros = _context.Libros
@@ -29,6 +33,7 @@ public class LibrosController : Controller
         return View(libros);
     }
 
+    // Consulta: cualquier usuario autenticado puede ver el detalle de un libro.
     public IActionResult Details(int id)
     {
         var libro = _context.Libros
@@ -39,7 +44,9 @@ public class LibrosController : Controller
         return View(libro);
     }
 
+    // Gestión: solo el rol Administrador puede agregar libros.
     [HttpGet]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult Create()
     {
         return View();
@@ -47,6 +54,7 @@ public class LibrosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult Create(Libro libro, IFormFile? image)
     {
         if (!ModelState.IsValid) return View(libro);
@@ -69,7 +77,9 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Gestión: solo el rol Administrador puede editar libros.
     [HttpGet]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult Edit(int id)
     {
         var libro = _context.Libros.Find(id);
@@ -80,6 +90,7 @@ public class LibrosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult Edit(int id, Libro libro, IFormFile? image)
     {
         if (id != libro.Id) return BadRequest();
@@ -116,7 +127,9 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Gestión: solo el rol Administrador puede eliminar libros.
     [HttpGet]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult Delete(int id)
     {
         var libro = _context.Libros
@@ -130,6 +143,7 @@ public class LibrosController : Controller
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrador)]
     public IActionResult DeleteConfirmed(int id)
     {
         var libro = _context.Libros.Find(id);

@@ -31,6 +31,14 @@ builder.Services
     .AddEntityFrameworkStores<BibliotecaDbContext>()
     .AddDefaultTokenProviders();
 
+// Autorización: las cookies de Identity redirigen al login y a la página de acceso denegado.
+builder.Services.AddAuthorization();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
 //Registro de dependencia IAutorService con su implementación AutorService en ciclo de vida Scoped.
 builder.Services.AddScoped<IAutorService, AutorService>();
 
@@ -50,7 +58,14 @@ using (var scope = app.Services.CreateScope())
 
     // Usuario de pruebas idempotente para poder iniciar sesión sin registrarse.
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    await DbInitializer.SeedAdminUserAsync(userManager);
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await DbInitializer.SeedRolesAsync(roleManager);
+    await DbInitializer.SeedAdminUserAsync(userManager, app.Environment);
+
+    // El administrador debe tener su rol antes de repartir el rol por defecto al resto.
+    await DbInitializer.EnsureAdminRoleAsync(userManager);
+    await DbInitializer.AssignDefaultRoleAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.

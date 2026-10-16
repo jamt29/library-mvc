@@ -12,6 +12,10 @@
             </div>
             <div class="d-flex flex-wrap align-items-center gap-2">
                 <span class="badge category-badge-id px-3 py-2">@Model.Count() libros</span>
+                @if (!User.IsInRole(Roles.Administrador))
+                {
+                    <span class="badge text-bg-secondary px-3 py-2">Solo lectura</span>
+                }
                 @if (Model.Any())
                 {
                     <div style="min-width: 240px;">
@@ -19,9 +23,12 @@
                         <input type="search" id="bookSearch" class="form-control" placeholder="Buscar por título o autor..." autocomplete="off" />
                     </div>
                 }
-                <a asp-action="Create" class="btn btn-accent">
-                    <span class="icon-inline me-1"><partial name="_Icon" model="@("book")" /></span> + Nuevo Libro
-                </a>
+                @if (User.IsInRole(Roles.Administrador))
+                {
+                    <a asp-action="Create" class="btn btn-accent">
+                        <span class="icon-inline me-1"><partial name="_Icon" model="@("book")" /></span> + Nuevo Libro
+                    </a>
+                }
             </div>
         </div>
 
@@ -70,8 +77,11 @@
                                     <p class="h5 mb-3" style="color: var(--biblio-leather);">@item.Precio.ToString("C")</p>
                                     <div class="d-flex gap-2">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-accent flex-fill">Ver</a>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-accent flex-fill">Editar</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger flex-fill">Eliminar</a>
+                                        @if (User.IsInRole(Roles.Administrador))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-accent flex-fill">Editar</a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger flex-fill">Eliminar</a>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -91,8 +101,15 @@
             <div class="alert alert-biblio text-center p-4">
                 <div class="mb-2"><partial name="_Icon" model="@("open-book")" /></div>
                 <h4 style="font-family: Georgia, serif;">No hay libros registrados</h4>
-                <p class="mb-3 text-muted">Comenzá agregando el primer libro al catálogo de la biblioteca.</p>
-                <a asp-action="Create" class="btn btn-accent">Crear el primer libro</a>
+                @if (User.IsInRole(Roles.Administrador))
+                {
+                    <p class="mb-3 text-muted">Comenzá agregando el primer libro al catálogo de la biblioteca.</p>
+                    <a asp-action="Create" class="btn btn-accent">Crear el primer libro</a>
+                }
+                else
+                {
+                    <p class="mb-0 text-muted">Todavía no hay libros publicados en el catálogo. Volvé más tarde.</p>
+                }
             </div>
         }
     </section>

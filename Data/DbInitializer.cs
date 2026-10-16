@@ -8,7 +8,7 @@ public static class DbInitializer
 {
     public const string AdminUserName = "admin";
     public const string AdminEmail = "admin@biblioteca.local";
-    public const string AdminPassword = "Admin2026";
+    public const string AdminPassword = "Admin2026!";
 
     public static void Initialize(BibliotecaDbContext context)
     {
@@ -17,11 +17,17 @@ public static class DbInitializer
         SeedAutores(context);
     }
 
-    // Crea el usuario de pruebas de forma idempotente: si ya existe, no hace nada.
-    public static async Task SeedAdminUserAsync(UserManager<IdentityUser> userManager)
+    public static async Task SeedAdminUserAsync(UserManager<IdentityUser> userManager, IHostEnvironment environment)
     {
-        if (await userManager.FindByNameAsync(AdminUserName) is not null)
+        var existing = await userManager.FindByNameAsync(AdminUserName);
+
+        if (existing is not null)
         {
+            if (environment.IsDevelopment())
+            {
+                await EnsureKnownPasswordAsync(userManager, existing);
+            }
+
             return;
         }
 
@@ -45,6 +51,70 @@ public static class DbInitializer
         {
             var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
             throw new InvalidOperationException($"No se pudo crear el usuario de pruebas '{AdminUserName}': {errors}");
+        }
+    }
+
+    private static async Task EnsureKnownPasswordAsync(UserManager<IdentityUser> userManager, IdentityUser user)
+    {
+        if (await userManager.CheckPasswordAsync(user, AdminPassword))
+        {
+            return;
+        }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await userManager.ResetPasswordAsync(user, token, AdminPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo restablecer la contraseña del usuario de pruebas '{AdminUserName}': {errors}");
+        }
+    }
+
+    // Crea los roles de la aplicación de forma idempotente.
+    public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    {
+        foreach (var roleName in Roles.Todos)
+        {
+            if (await roleManager.RoleExistsAsync(roleName))
+            {
+                continue;
+            }
+
+            var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new InvalidOperationException($"No se pudo crear el rol '{roleName}': {errors}");
+            }
+        }
+    }
+
+    // Garantiza que el usuario administrador tenga el rol Administrador, aunque ya existiera antes de los roles.
+    public static async Task EnsureAdminRoleAsync(UserManager<IdentityUser> userManager)
+    {
+        var admin = await userManager.FindByNameAsync(AdminUserName);
+        if (admin is null)
+        {
+            return;
+        }
+
+        if (!await userManager.IsInRoleAsync(admin, Roles.Administrador))
+        {
+            await userManager.AddToRoleAsync(admin, Roles.Administrador);
+        }
+    }
+
+    // Asigna el rol Usuario a los usuarios existentes que todavía no tienen ningún rol.
+    public static async Task AssignDefaultRoleAsync(UserManager<IdentityUser> userManager)
+    {
+        foreach (var user in userManager.Users.ToList())
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            if (roles.Count == 0)
+            {
+                await userManager.AddToRoleAsync(user, Roles.Usuario);
+            }
         }
     }
 
