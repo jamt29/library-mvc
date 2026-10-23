@@ -104,7 +104,20 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             // Todo usuario nuevo recibe el rol básico: puede consultar el catálogo, no gestionarlo.
-            await _userManager.AddToRoleAsync(user, Roles.Usuario);
+            var roleResult = await _userManager.AddToRoleAsync(user, Roles.Usuario);
+
+            if (!roleResult.Succeeded)
+            {
+                // Si no se pudo asignar el rol, se elimina la cuenta para no dejarla sin permisos.
+                await _userManager.DeleteAsync(user);
+
+                foreach (var error in roleResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, TranslateIdentityError(error));
+                }
+
+                return View(model);
+            }
 
             // No se inicia sesión automáticamente: el usuario debe autenticarse.
             TempData["Success"] = "Tu cuenta se creó correctamente. Ya podés iniciar sesión.";

@@ -56,16 +56,23 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<BibliotecaDbContext>();
     DbInitializer.Initialize(context);
 
-    // Usuario de pruebas idempotente para poder iniciar sesión sin registrarse.
+    // Usuarios de prueba idempotentes para poder iniciar sesión sin registrarse.
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    await DbInitializer.SeedRolesAsync(roleManager);
-    await DbInitializer.SeedAdminUserAsync(userManager, app.Environment);
 
-    // El administrador debe tener su rol antes de repartir el rol por defecto al resto.
+    await DbInitializer.MigrateLegacyAdminRoleAsync(roleManager, userManager);
+
+    await DbInitializer.SeedRolesAsync(roleManager);
+
+    await DbInitializer.SeedAdminUserAsync(userManager, app.Environment);
+    await DbInitializer.SeedBibliotecarioUserAsync(userManager, app.Environment);
+
     await DbInitializer.EnsureAdminRoleAsync(userManager);
+    await DbInitializer.EnsureBibliotecarioRoleAsync(userManager);
+
     await DbInitializer.AssignDefaultRoleAsync(userManager);
+    await DbInitializer.VerifyUsersHaveRoleAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.

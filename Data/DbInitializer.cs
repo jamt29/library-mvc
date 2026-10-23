@@ -10,6 +10,10 @@ public static class DbInitializer
     public const string AdminEmail = "admin@biblioteca.local";
     public const string AdminPassword = "Admin2026!";
 
+    public const string BibliotecarioUserName = "bibliotecario";
+    public const string BibliotecarioEmail = "bibliotecario@biblioteca.local";
+    public const string BibliotecarioPassword = "Bibliotecario2026!";
+
     public static void Initialize(BibliotecaDbContext context)
     {
         context.Database.Migrate();
@@ -25,7 +29,7 @@ public static class DbInitializer
         {
             if (environment.IsDevelopment())
             {
-                await EnsureKnownPasswordAsync(userManager, existing);
+                await EnsureKnownPasswordAsync(userManager, existing, AdminPassword);
             }
 
             return;
@@ -54,20 +58,109 @@ public static class DbInitializer
         }
     }
 
-    private static async Task EnsureKnownPasswordAsync(UserManager<IdentityUser> userManager, IdentityUser user)
+    // Crea el usuario de pruebas con rol Bibliotecario, de forma idempotente.
+    public static async Task SeedBibliotecarioUserAsync(UserManager<IdentityUser> userManager, IHostEnvironment environment)
     {
-        if (await userManager.CheckPasswordAsync(user, AdminPassword))
+        var existing = await userManager.FindByNameAsync(BibliotecarioUserName);
+
+        if (existing is not null)
+        {
+            if (environment.IsDevelopment())
+            {
+                await EnsureKnownPasswordAsync(userManager, existing, BibliotecarioPassword);
+            }
+
+            return;
+        }
+
+        // Si el correo ya pertenece a otra cuenta se omite, para no romper el arranque.
+        if (await userManager.FindByEmailAsync(BibliotecarioEmail) is not null)
+        {
+            return;
+        }
+
+        var bibliotecario = new IdentityUser
+        {
+            UserName = BibliotecarioUserName,
+            Email = BibliotecarioEmail,
+            // No se implementa confirmación por correo electrónico.
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(bibliotecario, BibliotecarioPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo crear el usuario de pruebas '{BibliotecarioUserName}': {errors}");
+        }
+    }
+
+    private static async Task EnsureKnownPasswordAsync(UserManager<IdentityUser> userManager, IdentityUser user, string password)
+    {
+        if (await userManager.CheckPasswordAsync(user, password))
         {
             return;
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        var result = await userManager.ResetPasswordAsync(user, token, AdminPassword);
+        var result = await userManager.ResetPasswordAsync(user, token, password);
 
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
-            throw new InvalidOperationException($"No se pudo restablecer la contraseña del usuario de pruebas '{AdminUserName}': {errors}");
+            throw new InvalidOperationException($"No se pudo restablecer la contraseña del usuario de pruebas '{user.UserName}': {errors}");
+        }
+    }
+
+    // Migra el rol heredado "Administrador" al nuevo rol Admin, de forma idempotente.
+    public static async Task MigrateLegacyAdminRoleAsync(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+    {
+        const string legacyRoleName = "Administrador";
+
+        var legacyRole = await roleManager.FindByNameAsync(legacyRoleName);
+        if (legacyRole is null)
+        {
+            return;
+        }
+
+        // Si el rol nuevo no existe, se renombra el heredado para conservar sus asignaciones.
+        if (!await roleManager.RoleExistsAsync(Roles.Admin))
+        {
+            legacyRole.Name = Roles.Admin;
+            var renameResult = await roleManager.UpdateAsync(legacyRole);
+
+            if (!renameResult.Succeeded)
+            {
+                var errors = string.Join("; ", renameResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new InvalidOperationException($"No se pudo renombrar el rol '{legacyRoleName}' a '{Roles.Admin}': {errors}");
+            }
+
+            return;
+        }
+
+        // Si ambos roles existen, se pasan los usuarios al rol nuevo y se elimina el heredado.
+        var legacyUsers = await userManager.GetUsersInRoleAsync(legacyRoleName);
+        foreach (var user in legacyUsers)
+        {
+            if (await userManager.IsInRoleAsync(user, Roles.Admin))
+            {
+                continue;
+            }
+
+            var addResult = await userManager.AddToRoleAsync(user, Roles.Admin);
+            if (!addResult.Succeeded)
+            {
+                var errors = string.Join("; ", addResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new InvalidOperationException($"No se pudo asignar el rol '{Roles.Admin}' al usuario '{user.UserName}': {errors}");
+            }
+        }
+
+        var deleteResult = await roleManager.DeleteAsync(legacyRole);
+        if (!deleteResult.Succeeded)
+        {
+            var errors = string.Join("; ", deleteResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo eliminar el rol heredado '{legacyRoleName}': {errors}");
         }
     }
 
@@ -90,7 +183,7 @@ public static class DbInitializer
         }
     }
 
-    // Garantiza que el usuario administrador tenga el rol Administrador, aunque ya existiera antes de los roles.
+    // Garantiza que el usuario administrador tenga el rol Admin, aunque ya existiera antes de los roles.
     public static async Task EnsureAdminRoleAsync(UserManager<IdentityUser> userManager)
     {
         var admin = await userManager.FindByNameAsync(AdminUserName);
@@ -99,9 +192,38 @@ public static class DbInitializer
             return;
         }
 
-        if (!await userManager.IsInRoleAsync(admin, Roles.Administrador))
+        if (await userManager.IsInRoleAsync(admin, Roles.Admin))
         {
-            await userManager.AddToRoleAsync(admin, Roles.Administrador);
+            return;
+        }
+
+        var result = await userManager.AddToRoleAsync(admin, Roles.Admin);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo asignar el rol '{Roles.Admin}' al usuario '{AdminUserName}': {errors}");
+        }
+    }
+
+    // Garantiza que el usuario bibliotecario tenga el rol Bibliotecario.
+    public static async Task EnsureBibliotecarioRoleAsync(UserManager<IdentityUser> userManager)
+    {
+        var bibliotecario = await userManager.FindByNameAsync(BibliotecarioUserName);
+        if (bibliotecario is null)
+        {
+            return;
+        }
+
+        if (await userManager.IsInRoleAsync(bibliotecario, Roles.Bibliotecario))
+        {
+            return;
+        }
+
+        var result = await userManager.AddToRoleAsync(bibliotecario, Roles.Bibliotecario);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new InvalidOperationException($"No se pudo asignar el rol '{Roles.Bibliotecario}' al usuario '{BibliotecarioUserName}': {errors}");
         }
     }
 
@@ -111,9 +233,29 @@ public static class DbInitializer
         foreach (var user in userManager.Users.ToList())
         {
             var roles = await userManager.GetRolesAsync(user);
+            if (roles.Count > 0)
+            {
+                continue;
+            }
+
+            var result = await userManager.AddToRoleAsync(user, Roles.Usuario);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new InvalidOperationException($"No se pudo asignar el rol '{Roles.Usuario}' al usuario '{user.UserName}': {errors}");
+            }
+        }
+    }
+
+    // Comprobación final de la siembra: todos los usuarios deben tener al menos un rol.
+    public static async Task VerifyUsersHaveRoleAsync(UserManager<IdentityUser> userManager)
+    {
+        foreach (var user in userManager.Users.ToList())
+        {
+            var roles = await userManager.GetRolesAsync(user);
             if (roles.Count == 0)
             {
-                await userManager.AddToRoleAsync(user, Roles.Usuario);
+                throw new InvalidOperationException($"El usuario '{user.UserName}' quedó sin roles asignados.");
             }
         }
     }

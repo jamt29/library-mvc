@@ -44,9 +44,9 @@ public class LibrosController : Controller
         return View(libro);
     }
 
-    // Gestión: solo el rol Administrador puede agregar libros.
+    // Gestión: solo los roles Admin y Bibliotecario pueden agregar libros.
     [HttpGet]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult Create()
     {
         return View();
@@ -54,7 +54,7 @@ public class LibrosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult Create(Libro libro, IFormFile? image)
     {
         if (!ModelState.IsValid) return View(libro);
@@ -77,9 +77,9 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // Gestión: solo el rol Administrador puede editar libros.
+    // Gestión: solo los roles Admin y Bibliotecario pueden editar libros.
     [HttpGet]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult Edit(int id)
     {
         var libro = _context.Libros.Find(id);
@@ -90,7 +90,7 @@ public class LibrosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult Edit(int id, Libro libro, IFormFile? image)
     {
         if (id != libro.Id) return BadRequest();
@@ -127,9 +127,9 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // Gestión: solo el rol Administrador puede eliminar libros.
+    // Gestión: solo los roles Admin y Bibliotecario pueden eliminar libros.
     [HttpGet]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult Delete(int id)
     {
         var libro = _context.Libros
@@ -143,7 +143,7 @@ public class LibrosController : Controller
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = Roles.Administrador)]
+    [Authorize(Roles = Roles.Gestion)]
     public IActionResult DeleteConfirmed(int id)
     {
         var libro = _context.Libros.Find(id);

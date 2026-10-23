@@ -27,18 +27,30 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Libros" asp-action="Index">Libros</a>
                         </li>
+                        @if (Roles.PuedeGestionar(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Libros" asp-action="Create">Nuevo libro</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Autores" asp-action="Index">Autores</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Categorías</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Loans">Prestamos</a>
-                        </li>
+                        @if (User.IsInRole(Roles.Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Usuarios</a>
+                            </li>
+                        }
+                        @if (Roles.PuedeGestionar(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Loans">Prestamos</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">Acerca De</a>
                         </li>
@@ -48,9 +60,13 @@
                         {
                             <li class="nav-item">
                                 <span class="navbar-text text-dark me-2">Hola, @User.Identity?.Name</span>
-                                @if (User.IsInRole(Roles.Administrador))
+                                @if (User.IsInRole(Roles.Admin))
                                 {
-                                    <span class="badge text-bg-dark">Administrador</span>
+                                    <span class="badge text-bg-dark">Admin</span>
+                                }
+                                else if (User.IsInRole(Roles.Bibliotecario))
+                                {
+                                    <span class="badge text-bg-info">Bibliotecario</span>
                                 }
                                 else if (User.IsInRole(Roles.Usuario))
                                 {
