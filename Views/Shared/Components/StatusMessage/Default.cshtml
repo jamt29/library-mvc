@@ -1,0 +1,33 @@
+@model StatusMessageViewModel
+
+<div class="status-panel status-panel--@Model.Tone" role="alert" aria-live="polite">
+    <div class="status-panel__glow" aria-hidden="true"></div>
+
+    <div class="status-panel__body">
+        <span class="status-panel__icon" aria-hidden="true">
+            <partial name="_Icon" model="@Model.Icon" />
+        </span>
+
+        @if (!string.IsNullOrEmpty(Model.Badge))
+        {
+            <span class="status-panel__badge">@Model.Badge</span>
+        }
+
+        <h2 class="status-panel__title">@Model.Title</h2>
+        <p class="status-panel__message">@Model.Message</p>
+
+        @if (!string.IsNullOrEmpty(Model.Detail))
+        {
+            <p class="status-panel__detail">@Model.Detail</p>
+        }
+
+        <partial name="_StatusActions" model="@Model.Actions" />
+
+        @if (!string.IsNullOrEmpty(Model.RequestId))
+        {
+            <p class="status-panel__request">
+                Identificador de la petición: <code>@Model.RequestId</code>
+            </p>
+        }
+    </div>
+</div>

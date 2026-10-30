@@ -1,0 +1,8 @@
+@model List<StatusActionViewModel>
+
+<div class="status-actions">
+    @foreach (var action in Model)
+    {
+        <a href="@action.Url" class="btn status-btn status-btn--@action.Style">@action.Label</a>
+    }
+</div>

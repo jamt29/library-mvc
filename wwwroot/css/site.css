@@ -1063,3 +1063,305 @@ body {
     padding: 1.5rem 1.1rem;
   }
 }
+
+/* ==========================================================================
+   Páginas de estado: error general y acceso denegado
+   (componente reutilizable StatusMessageViewComponent)
+   ========================================================================== */
+.status-page {
+  padding-bottom: 2rem;
+}
+
+.status-hero {
+  background-color: var(--biblio-ink);
+  background-image: linear-gradient(135deg, rgba(43, 36, 32, 0.96), rgba(107, 66, 38, 0.9));
+  color: var(--biblio-paper);
+  padding: 2.75rem 1.5rem 4rem;
+  text-align: center;
+  border-top: 4px solid var(--biblio-gold);
+  border-radius: var(--biblio-radius) var(--biblio-radius) 0 0;
+}
+
+.status-hero--danger {
+  background-image: linear-gradient(135deg, rgba(43, 36, 32, 0.96), rgba(138, 43, 56, 0.92));
+}
+
+.status-hero__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.status-hero__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--biblio-gold);
+}
+
+.status-hero__icon .icon {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
+.status-hero__kicker {
+  margin: 0.9rem 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.status-hero__title {
+  margin: 0 0 0.6rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.15rem;
+  font-weight: 700;
+}
+
+.status-hero__lead {
+  margin: 0 auto;
+  max-width: 580px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.status-panel {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid var(--biblio-paper-dark);
+  border-top: 4px solid var(--biblio-leather);
+  border-radius: var(--biblio-radius);
+  box-shadow: var(--biblio-shadow-lg);
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  margin-top: -2.5rem;
+  overflow: hidden;
+}
+
+.status-panel--danger { border-top-color: #b02a37; }
+.status-panel--warning { border-top-color: var(--biblio-gold); }
+.status-panel--info { border-top-color: var(--biblio-forest); }
+
+.status-panel__glow {
+  position: absolute;
+  right: -50px;
+  bottom: -70px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background-image: radial-gradient(circle, rgba(169, 120, 47, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+.status-panel--danger .status-panel__glow {
+  background-image: radial-gradient(circle, rgba(176, 42, 55, 0.16), transparent 70%);
+}
+
+.status-panel--info .status-panel__glow {
+  background-image: radial-gradient(circle, rgba(58, 90, 64, 0.16), transparent 70%);
+}
+
+.status-panel__body {
+  position: relative;
+  z-index: 1;
+}
+
+.status-panel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.85rem;
+  border-radius: 50%;
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+}
+
+.status-panel--danger .status-panel__icon {
+  background-color: rgba(176, 42, 55, 0.08);
+  color: #b02a37;
+}
+
+.status-panel--warning .status-panel__icon {
+  background-color: rgba(169, 120, 47, 0.12);
+  color: var(--biblio-gold);
+}
+
+.status-panel--info .status-panel__icon {
+  background-color: rgba(58, 90, 64, 0.1);
+  color: var(--biblio-forest);
+}
+
+.status-panel__icon .icon {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+.status-panel__badge {
+  display: inline-block;
+  margin-bottom: 0.85rem;
+  padding: 0.2rem 0.85rem;
+  border: 1px solid var(--biblio-paper-dark);
+  border-radius: 999px;
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.status-panel__title {
+  margin: 0 0 0.6rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--biblio-ink);
+}
+
+.status-panel__message {
+  margin: 0 auto 0.5rem;
+  max-width: 640px;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: #4a423c;
+}
+
+.status-panel__detail {
+  margin: 0 auto;
+  max-width: 620px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #6c757d;
+}
+
+.status-panel__request {
+  margin: 1.35rem 0 0;
+  font-size: 0.78rem;
+  color: #8a8079;
+}
+
+.status-panel__request code {
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+}
+
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.status-btn {
+  border-radius: var(--biblio-radius);
+  padding: 0.55rem 1.25rem;
+  font-weight: 600;
+}
+
+.status-btn--solid {
+  background-color: var(--biblio-leather);
+  border: 1px solid var(--biblio-leather);
+  color: #fff;
+}
+
+.status-btn--solid:hover,
+.status-btn--solid:focus {
+  background-color: var(--biblio-ink);
+  border-color: var(--biblio-ink);
+  color: #fff;
+}
+
+.status-btn--outline {
+  background-color: #fff;
+  border: 1px solid var(--biblio-leather);
+  color: var(--biblio-leather);
+}
+
+.status-btn--outline:hover,
+.status-btn--outline:focus {
+  background-color: var(--biblio-leather);
+  color: #fff;
+}
+
+.status-btn--ghost {
+  background-color: var(--biblio-paper);
+  border: 1px solid var(--biblio-paper-dark);
+  color: var(--biblio-ink);
+}
+
+.status-btn--ghost:hover,
+.status-btn--ghost:focus {
+  background-color: var(--biblio-paper-dark);
+  color: var(--biblio-ink);
+}
+
+.status-btn:focus-visible {
+  outline: 3px solid var(--biblio-gold);
+  outline-offset: 2px;
+}
+
+.status-suggestions {
+  margin-top: 2.5rem;
+}
+
+.status-suggestion {
+  background-color: #fff;
+  border: 1px solid var(--biblio-paper-dark);
+  border-top: 3px solid var(--biblio-gold);
+  border-radius: var(--biblio-radius);
+  box-shadow: var(--biblio-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-suggestion:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--biblio-shadow-md);
+}
+
+.status-suggestion__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+  border-radius: var(--biblio-radius);
+  background-color: var(--biblio-paper);
+  color: var(--biblio-leather);
+}
+
+.status-suggestion__icon .icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.status-suggestion__title {
+  margin: 0 0 0.4rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  color: var(--biblio-ink);
+}
+
+.status-suggestion__text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #5c524c;
+}
+
+@media (max-width: 767.98px) {
+  .status-hero { padding: 2rem 1.25rem 3.25rem; }
+  .status-hero__title { font-size: 1.7rem; }
+  .status-panel { padding: 1.75rem 1.1rem; margin-top: -2rem; }
+  .status-panel__title { font-size: 1.45rem; }
+  .status-actions { flex-direction: column; align-items: stretch; }
+}

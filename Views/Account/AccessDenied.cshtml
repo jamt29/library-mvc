@@ -1,41 +1,76 @@
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Acceso denegado";
     var autenticado = User.Identity?.IsAuthenticated == true;
+    var rol = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+    var recurso = Context.Request.Query["ReturnUrl"].FirstOrDefault();
+    var status = StatusMessageFactory.ForAccessDenied(autenticado, rol, Url, recurso);
 }
 
-<div class="biblio-home">
-    <section class="biblio-section mb-4">
+<div class="biblio-home status-page">
+    <section class="status-hero status-hero--danger" role="banner">
+        <div class="status-hero__inner">
+            <span class="status-hero__icon" aria-hidden="true">
+                <partial name="_Icon" model="@("shield")" />
+            </span>
+            <p class="status-hero__kicker">Control de permisos · Biblioteca</p>
+            <h1 class="status-hero__title">Esta sección está restringida</h1>
+            <p class="status-hero__lead">
+               Tu perfil no incluye los permisos necesarios para esta sección, pero podés seguir
+                usando todas las partes de la biblioteca habilitadas para tu rol.
+            </p>
+        </div>
+    </section>
+
+    <section class="biblio-section">
         <div class="row justify-content-center">
-            <div class="col-md-7 col-lg-5">
-                <div class="auth-card">
-                    <div class="auth-card__header">
-                        <span class="auth-card__icon"><partial name="_Icon" model="@("door")" /></span>
-                        <h1 class="auth-card__title">Acceso denegado</h1>
-                        <p class="auth-card__subtitle">Tu cuenta no tiene permisos para realizar esta operación.</p>
-                    </div>
+            <div class="col-lg-9">
+                @await Component.InvokeAsync("StatusMessage", new { model = status })
+            </div>
+        </div>
 
-                    <div class="alert alert-danger" role="alert">
-                        @if (autenticado)
-                        {
-                            <text>
-                                Iniciaste sesión correctamente, pero esta acción está reservada para los roles
-                                <strong>Admin</strong> y <strong>Bibliotecario</strong>. Con tu rol actual todavía podés consultar el catálogo.
-                            </text>
-                        }
-                        else
-                        {
-                            <text>
-                                Necesitás iniciar sesión con una cuenta que tenga permisos para realizar
-                                esta operación.
-                            </text>
-                        }
+        <div class="row row-cols-1 row-cols-md-3 g-4 status-suggestions">
+            <div class="col">
+                <article class="card status-suggestion h-100">
+                    <div class="card-body">
+                        <span class="status-suggestion__icon" aria-hidden="true">
+                            <partial name="_Icon" model="@("open-book")" />
+                        </span>
+                        <h3 class="status-suggestion__title">Consultá el catálogo</h3>
+                        <p class="status-suggestion__text">
+                            La búsqueda y la lectura de libros están disponibles para todos los usuarios
+                            con una sesión activa.
+                        </p>
                     </div>
-
-                    <div class="d-flex flex-wrap gap-2">
-                        <a asp-controller="Libros" asp-action="Index" class="btn btn-accent">Ir al catálogo</a>
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-accent">Volver al inicio</a>
+                </article>
+            </div>
+            <div class="col">
+                <article class="card status-suggestion h-100">
+                    <div class="card-body">
+                        <span class="status-suggestion__icon" aria-hidden="true">
+                            <partial name="_Icon" model="@("folder")" />
+                        </span>
+                        <h3 class="status-suggestion__title">Explorá las categorías</h3>
+                        <p class="status-suggestion__text">
+                            Revisá las temáticas del acervo para encontrar lecturas relacionadas con tu
+                            intereses.
+                        </p>
                     </div>
-                </div>
+                </article>
+            </div>
+            <div class="col">
+                <article class="card status-suggestion h-100">
+                    <div class="card-body">
+                        <span class="status-suggestion__icon" aria-hidden="true">
+                            <partial name="_Icon" model="@("person")" />
+                        </span>
+                        <h3 class="status-suggestion__title">¿Necesitás más permisos?</h3>
+                        <p class="status-suggestion__text">
+                            Si tu tarea requiere administrar el catálogo, pedile a un administrador que
+                            actualice tu rol.
+                        </p>
+                    </div>
+                </article>
             </div>
         </div>
     </section>

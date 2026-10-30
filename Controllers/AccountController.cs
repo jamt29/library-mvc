@@ -9,11 +9,16 @@ public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public AccountController(
+        UserManager<IdentityUser> userManager,
+        SignInManager<IdentityUser> signInManager,
+        ILogger<AccountController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -46,6 +51,7 @@ public class AccountController : Controller
         if (user is null)
         {
             // Mensaje genérico: no se revela si el usuario existe o no.
+            _logger.LogWarning("Intento de inicio de sesión con un usuario no registrado: {Usuario}.", model.UsuarioOCorreo);
             ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
             ViewData["ReturnUrl"] = returnUrl;
             return View(model);
@@ -55,6 +61,8 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            _logger.LogInformation("Inicio de sesión exitoso del usuario {Usuario}.", user.UserName);
+
             TempData["Success"] = $"Bienvenido, {user.UserName}.";
 
             // Solo se redirige a URLs locales para evitar redirecciones abiertas.
@@ -67,6 +75,7 @@ public class AccountController : Controller
         }
 
         ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
+        _logger.LogWarning("Inicio de sesión rechazado por credenciales inválidas para el usuario {Usuario}.", user.UserName);
         ViewData["ReturnUrl"] = returnUrl;
         return View(model);
     }
@@ -120,6 +129,8 @@ public class AccountController : Controller
             }
 
             // No se inicia sesión automáticamente: el usuario debe autenticarse.
+            _logger.LogInformation("Se creó una cuenta nueva para el usuario {Usuario}.", user.UserName);
+
             TempData["Success"] = "Tu cuenta se creó correctamente. Ya podés iniciar sesión.";
             return RedirectToAction(nameof(Login));
         }
@@ -138,6 +149,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
+        _logger.LogInformation("Cierre de sesión del usuario {Usuario}.", User.Identity?.Name ?? "anónimo");
         TempData["Success"] = "Cerraste sesión correctamente.";
         return RedirectToAction("Index", "Home");
     }
@@ -146,6 +158,15 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult AccessDenied()
     {
+        // ReturnUrl apunta al recurso que el usuario intentó abrir y no está protegido.
+        var recurso = Request.Query["ReturnUrl"].FirstOrDefault() ?? Request.Path.Value;
+
+        _logger.LogWarning(
+            "Acceso denegado. Usuario: {Usuario}, rol: {Rol}, recurso solicitado: {Recurso}.",
+            User.Identity?.Name ?? "anónimo",
+            User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "sin rol",
+            recurso);
+
         return View();
     }
 

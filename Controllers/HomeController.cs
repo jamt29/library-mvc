@@ -6,6 +6,13 @@ namespace Biblioteca.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger)
+    {
+        _logger = logger;
+    }
+
     public IActionResult Index()
     {
         return View();
@@ -41,9 +48,25 @@ public class HomeController : Controller
         return View();
     }
 
+    // Página de error general: se invoca desde UseExceptionHandler y desde
+    // UseStatusCodePagesWithReExecute. Solo muestra información general al usuario.
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int? code = null)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var statusCode = code ?? StatusCodes.Status500InternalServerError;
+        Response.StatusCode = statusCode;
+
+        var requestId = HttpContext.TraceIdentifier;
+
+        _logger.LogWarning(
+            "Se muestra la página de error personalizada. Código HTTP: {Codigo}. Identificador de petición: {RequestId}.",
+            statusCode,
+            requestId);
+
+        return View(new ErrorViewModel
+        {
+            RequestId = requestId,
+            StatusCode = statusCode
+        });
     }
 }
