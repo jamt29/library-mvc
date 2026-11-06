@@ -1,8 +1,7 @@
-using Biblioteca.Data;
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Controllers;
 
@@ -13,13 +12,13 @@ public class LibrosController : Controller
     private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
     private const long MaxFileSize = 2 * 1024 * 1024;
 
-    private readonly BibliotecaDbContext _context;
+    private readonly ILibroService _libroService;
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<LibrosController> _logger;
 
-    public LibrosController(BibliotecaDbContext context, IWebHostEnvironment env, ILogger<LibrosController> logger)
+    public LibrosController(ILibroService libroService, IWebHostEnvironment env, ILogger<LibrosController> logger)
     {
-        _context = context;
+        _libroService = libroService;
         _env = env;
         _logger = logger;
     }
@@ -29,12 +28,9 @@ public class LibrosController : Controller
     {
         _logger.LogInformation("Consulta del catálogo de libros iniciada.");
 
-        var libros = _context.Libros
-            .AsNoTracking()
-            .OrderBy(l => l.Titulo)
-            .ToList();
+        var libros = _libroService.GetAll();
 
-        _logger.LogInformation("Catálogo de libros consultado. Total de libros obtenidos: {Cantidad}.", libros.Count);
+        _logger.LogInformation("Catálogo de libros consultado. Total de libros obtenidos: {Cantidad}.", libros.Count());
 
         return View(libros);
     }
@@ -44,9 +40,7 @@ public class LibrosController : Controller
     {
         _logger.LogInformation("Consulta del detalle del libro con identificador {LibroId}.", id);
 
-        var libro = _context.Libros
-            .AsNoTracking()
-            .FirstOrDefault(l => l.Id == id);
+        var libro = _libroService.GetById(id);
 
         if (libro is null)
         {
@@ -96,10 +90,9 @@ public class LibrosController : Controller
 
         try
         {
-            _context.Libros.Add(libro);
-            _context.SaveChanges();
+            _libroService.Create(libro);
         }
-        catch (DbUpdateException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error al guardar el libro '{Titulo}' en la base de datos.", libro.Titulo);
             throw;
@@ -118,7 +111,7 @@ public class LibrosController : Controller
     {
         _logger.LogInformation("Se abrió el formulario de edición del libro {LibroId}.", id);
 
-        var libro = _context.Libros.Find(id);
+        var libro = _libroService.GetById(id);
 
         if (libro is null)
         {
@@ -148,7 +141,7 @@ public class LibrosController : Controller
             return View(libro);
         }
 
-        var current = _context.Libros.Find(id);
+        var current = _libroService.GetById(id);
         if (current is null)
         {
             _logger.LogWarning("No se encontró el libro con identificador {LibroId} para actualizar.", id);
@@ -156,8 +149,6 @@ public class LibrosController : Controller
         }
 
         var previousImage = current.ImagenPath;
-
-        _context.Entry(current).State = EntityState.Detached;
 
         var savedFile = TrySaveImage(image);
         if (savedFile is ImageSaveResult.Failure failure)
@@ -174,10 +165,9 @@ public class LibrosController : Controller
 
         try
         {
-            _context.Libros.Update(libro);
-            _context.SaveChanges();
+            _libroService.Update(id, libro);
         }
-        catch (DbUpdateException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error al actualizar el libro {LibroId} en la base de datos.", id);
             throw;
@@ -201,9 +191,7 @@ public class LibrosController : Controller
     {
         _logger.LogInformation("Se solicitó la eliminación del libro {LibroId}.", id);
 
-        var libro = _context.Libros
-            .AsNoTracking()
-            .FirstOrDefault(l => l.Id == id);
+        var libro = _libroService.GetById(id);
 
         if (libro is null)
         {
@@ -222,7 +210,7 @@ public class LibrosController : Controller
     {
         _logger.LogInformation("Eliminación del libro {LibroId} solicitada.", id);
 
-        var libro = _context.Libros.Find(id);
+        var libro = _libroService.GetById(id);
         if (libro is null)
         {
             _logger.LogWarning("No se encontró el libro con identificador {LibroId} para eliminar.", id);
@@ -234,10 +222,9 @@ public class LibrosController : Controller
         try
         {
             DeleteImageFile(libro.ImagenPath);
-            _context.Libros.Remove(libro);
-            _context.SaveChanges();
+            _libroService.Delete(id);
         }
-        catch (DbUpdateException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error al eliminar el libro {LibroId} de la base de datos.", id);
             throw;

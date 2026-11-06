@@ -46,6 +46,9 @@ builder.Services.AddScoped<IAutorService, AutorService>();
 // Registro de ICategoriaService con CategoriaService (ADO.NET con PostgreSQL)
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
+// Registro de ILibroService con LibroService (EF Core con PostgreSQL)
+builder.Services.AddScoped<ILibroService, LibroService>();
+
 // Para intercambiar la implementación sin tocar AutoresController, simplemente se cambia el registro a:
 // builder.Services.AddScoped<IAutorService, AlternativeAutorService>();
 
